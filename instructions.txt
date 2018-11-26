@@ -1,0 +1,8 @@
+1.
+id = id op id.
+2.
+id = id op constant.
+3.
+id = constant.
+4.
+id ?  go int.
