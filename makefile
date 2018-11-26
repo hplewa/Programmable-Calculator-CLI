@@ -1,8 +1,7 @@
-main: ProgrammableCalculator.o
-	gcc -o main ProgrammableCalculator.o
+SRCS = $(wildcard *.c) #list of all .c files
 
-ProgrammableCalculator.o: ProgrammableCalculator.cpp
-	gcc -c ProgrammableCalculator.cpp
+main: $(SRCS)
+	gpp ProgrammableCalculator.cpp -o programmableCalculator
 
 clean:
-	rm main ProgrammableCalculator.o
+	rm programmableCalculator
