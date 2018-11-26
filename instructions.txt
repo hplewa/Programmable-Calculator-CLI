@@ -1,8 +1,14 @@
-1.
-id = id op id.
-2.
-id = id op constant.
-3.
-id = constant.
-4.
-id ?  go int.
+w = 1
+x = 2
+y = 3
+z = 4
+w = w + 1
+x = x - 2
+y = y * 3
+z = z / 4
+w = w ** 2
+w = w + x
+x = x - y
+y = y * z
+z = z / w
+w = w ** x
