@@ -1,7 +1,7 @@
 SRCS = $(wildcard *.c) #list of all .c files
 
 main: $(SRCS)
-	g++ ProgrammableCalculator.cpp -o programmableCalculator
+	g++ ProgrammableCalculator.cpp -o ProgrammableCalculator
 
 clean:
-	rm programmableCalculator
+	rm ProgrammableCalculator
