@@ -91,16 +91,14 @@ void executeType2(vector<string> instructions, int index, double* registers) {
     string instruction = instructions[index];
     int id1 = instruction[0] - 'w';
     int id2 = instruction[4] - 'w';
-    double constant = stof(instruction.substr(6));
+    double constant = stof(instruction.substr(8));
     string op = instruction.substr(6, 1);
     // Determine operand
     if (instruction.substr(6,2).compare("**") == 0) {
-        constant = stod(instruction.substr(7));
         registers[id1] = pow(registers[id2], constant);
     }
     else if (op.compare("+") == 0) {
         registers[id1] = registers[id2] + constant;
-
     }
     else if (op.compare("-") == 0) {
         registers[id1] = registers[id2] - constant;
