@@ -57,18 +57,13 @@ vector<string> readInstructions(string cmd) {
 }
 
 // 1. id = id op id.
-void executeType1(vector<string> instructions, int index, double* registers, bool debug) {
+void executeType1(vector<string> instructions, int index, double* registers) {
     // Parse instruction
     string instruction = instructions[index];
     int id1 = instruction[0] - 'w';
     int id2 = instruction[4] - 'w';
     int id3 = instruction[instruction.length() - 1] - 'w';
     string op = instruction.substr(6, 1);
-    if (debug) {
-        cout << "Type 1: " << index + 1 << ". " << instruction << "." << endl;
-        cout << "Registers before: ";
-        printRegisters(registers);
-    }
     // Determine operand
     if (instruction.substr(6, 2).compare("**") == 0) {
         registers[id1] = pow(registers[id2], registers[id3]);
@@ -88,26 +83,16 @@ void executeType1(vector<string> instructions, int index, double* registers, boo
     else if (op.compare("/") == 0) {
         registers[id1] = registers[id2] / registers[id3];
     }
-    if (debug) {
-        cout << "Registers after: ";
-        printRegisters(registers);
-        cout << "Next instruction index: " << index + 2 << endl;
-    }
 }
 
 // 2. id = id op constant.
-void executeType2(vector<string> instructions, int index, double* registers, bool debug) {
+void executeType2(vector<string> instructions, int index, double* registers) {
     // Parse instruction
     string instruction = instructions[index];
     int id1 = instruction[0] - 'w';
     int id2 = instruction[4] - 'w';
     double constant = stof(instruction.substr(6));
     string op = instruction.substr(6, 1);
-    if (debug) {
-        cout << "Type 2: " << index + 1 << ". " << instruction << "." << endl;
-        cout << "Registers before: ";
-        printRegisters(registers);
-    }
     // Determine operand
     if (instruction.substr(6,2).compare("**") == 0) {
         constant = stod(instruction.substr(7));
@@ -128,59 +113,33 @@ void executeType2(vector<string> instructions, int index, double* registers, boo
     else if (op.compare("/") == 0) {
         registers[id1] = registers[id2] / constant;
     }
-    // Determine operand
-    if (debug) {
-        cout << "Registers after: ";
-        printRegisters(registers);
-        cout << "Next instruction index: " << index + 2 << endl;
-    }
 }
 
 // 3. id = constant.
-void executeType3(vector<string> instructions, int index, double* registers, bool debug) {
+void executeType3(vector<string> instructions, int index, double* registers) {
     // Parse instruction
     string instruction = instructions[index];
     int id1 = instruction[0] - 'w';
     double constant = stof(instruction.substr(4));
-    if (debug) {
-        cout << "Type 3: " << index + 1 << ". " << instruction << "." << endl;
-        cout << "Registers before: ";
-        printRegisters(registers);
-    }
     // Executing
     registers[id1] = constant;
-    if (debug) {
-        cout << "Registers after: ";
-        printRegisters(registers);
-        cout << "Next instruction index: " << index + 2 << endl;
-    }
 }
 
-void executeInstruction(vector<string>, int, double*, bool);
+void executeInstruction(vector<string>, int, double*);
 
 // 4. id ? go int.
-void executeType4(vector<string> instructions, int index, double* registers, bool debug) {
+void executeType4(vector<string> instructions, int index, double* registers) {
     string instruction = instructions[index];
     int id1 = instruction[0] - 'w';
     int lineNumber = stoi(instruction.substr(8));
-    if (debug) {
-        cout << "Type 4: " << index + 1 << ". " << instruction << "." << endl;
-        cout << "Registers before: ";
-        printRegisters(registers);
-    }
     // If value of register left of ? is not 0, execute the line provided right of go
     if (registers[id1] != 0) {
-        executeInstruction(instructions, lineNumber, registers, debug);
-    }
-    if (debug) {
-        cout << "Registers after: ";
-        printRegisters(registers);
-        cout << "Next instruction index: " << index + 2 << endl;
+        executeInstruction(instructions, lineNumber, registers);
     }
 }
 
 // Execute the instruction in instructions at the index, on the registers
-void executeInstruction(vector<string> instructions, int index, double* registers, bool debug) {
+void executeInstruction(vector<string> instructions, int index, double* registers) {
     if (index >= instructions.size()) {
         cout << "Index: " << index << " exceeds the number of instructions: " << instructions.size() << endl;
         return;
@@ -191,21 +150,21 @@ void executeInstruction(vector<string> instructions, int index, double* register
     op1 = instruction.at(2);
     // Type 4. id ? go int
     if (op1.compare("?") == 0) {
-        executeType4(instructions, index, registers, debug);
+        executeType4(instructions, index, registers);
     }
     // Type 3. id = constant
     else if (!isalpha(instruction.at(4))) {
         // The character after op1 is not alphabetic -> it's a constant
-        executeType3(instructions, index, registers, debug);
+        executeType3(instructions, index, registers);
     }
     // Type 2 id = id op constant
     else if (!isalpha(instruction.at(instruction.length() - 1))) {
         // Last character is not alphabetic -> it's a constant
-        executeType2(instructions, index, registers, debug);
+        executeType2(instructions, index, registers);
     }
     // Type 1 id = id op id
     else{
-        executeType1(instructions, index, registers, debug);
+        executeType1(instructions, index, registers);
     }
 }
 
@@ -248,7 +207,11 @@ int main(int argc, char** args) {
         if (cmd.compare("d") == 0) {
             // Get index
             if (index < instructions.size()) {
-                executeInstruction(instructions, index, registers, true);
+                cout << "Registers before: ";
+                printRegisters(registers);
+                executeInstruction(instructions, index, registers);
+                cout << "Registers after: ";
+                printRegisters(registers);
                 index++;
                 cout << "Index of next instruction to be executed: " << index + 1 << endl;
             }
@@ -265,7 +228,7 @@ int main(int argc, char** args) {
                     cout << "Increasing the limit of how many evaluations can be made by 100." << endl;
                     evaluationLimit += 100;
                 }
-                executeInstruction(instructions, index, registers, true);
+                executeInstruction(instructions, index, registers);
                 index++;
                 evaluations++;
             }
