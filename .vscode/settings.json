@@ -1,7 +1,10 @@
 {
     "files.associations": {
+        "*.md": "makefile",
         "ostream": "cpp",
         "*.tcc": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp"
     }
 }
