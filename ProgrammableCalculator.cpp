@@ -19,7 +19,6 @@ void printMenu() {
     << "i file_name - Input file - read instructions from this file" << endl
     << "d - Debug - execute next instruction, print debugging info" << endl 
     << "r - Run - execute instruction from current index" << endl
-    << "c - Continue - execute remaining instructions" << endl
     << "p - Print - print instructions" << endl
     << "h - help" << endl 
     << "q - quit" << endl;
@@ -66,7 +65,7 @@ void executeType1(vector<string> instructions, int index, double* registers, boo
     int id3 = instruction[instruction.length() - 1] - 'w';
     string op = instruction.substr(6, 1);
     if (debug) {
-        cout << "Type 1: " << index <<". " << instruction << "." << endl;
+        cout << "Type 1: " << index + 1 << ". " << instruction << "." << endl;
         cout << "Registers before: ";
         printRegisters(registers);
     }
@@ -92,6 +91,7 @@ void executeType1(vector<string> instructions, int index, double* registers, boo
     if (debug) {
         cout << "Registers after: ";
         printRegisters(registers);
+        cout << "Next instruction index: " << index + 2 << endl;
     }
 }
 
@@ -104,7 +104,7 @@ void executeType2(vector<string> instructions, int index, double* registers, boo
     double constant = stof(instruction.substr(6));
     string op = instruction.substr(6, 1);
     if (debug) {
-        cout << "Type 2: " << index <<". " << instruction << "." << endl;
+        cout << "Type 2: " << index + 1 << ". " << instruction << "." << endl;
         cout << "Registers before: ";
         printRegisters(registers);
     }
@@ -132,6 +132,7 @@ void executeType2(vector<string> instructions, int index, double* registers, boo
     if (debug) {
         cout << "Registers after: ";
         printRegisters(registers);
+        cout << "Next instruction index: " << index + 2 << endl;
     }
 }
 
@@ -142,16 +143,16 @@ void executeType3(vector<string> instructions, int index, double* registers, boo
     int id1 = instruction[0] - 'w';
     double constant = stof(instruction.substr(4));
     if (debug) {
-        cout << "Type 3: " << index <<". " << instruction << "." << endl;
+        cout << "Type 3: " << index + 1 << ". " << instruction << "." << endl;
         cout << "Registers before: ";
         printRegisters(registers);
-        cout << "id1: " << id1 << " constant: " << constant << endl;
     }
-    
+    // Executing
     registers[id1] = constant;
     if (debug) {
         cout << "Registers after: ";
         printRegisters(registers);
+        cout << "Next instruction index: " << index + 2 << endl;
     }
 }
 
@@ -163,7 +164,7 @@ void executeType4(vector<string> instructions, int index, double* registers, boo
     int id1 = instruction[0] - 'w';
     int lineNumber = stoi(instruction.substr(8));
     if (debug) {
-        cout << "Type 4: " << index <<". " << instruction << "." << endl;
+        cout << "Type 4: " << index + 1 << ". " << instruction << "." << endl;
         cout << "Registers before: ";
         printRegisters(registers);
     }
@@ -174,6 +175,7 @@ void executeType4(vector<string> instructions, int index, double* registers, boo
     if (debug) {
         cout << "Registers after: ";
         printRegisters(registers);
+        cout << "Next instruction index: " << index + 2 << endl;
     }
 }
 
@@ -240,7 +242,7 @@ int main(int argc, char** args) {
     int index = 0;
     int evaluationLimit = 100;
     int evaluations = 0;
-    while (evaluations < evaluationLimit) {
+    while (index < instructions.size()) {
         getline(cin, cmd);
         // Debug
         if (cmd.compare("d") == 0) {
@@ -259,17 +261,14 @@ int main(int argc, char** args) {
             while (evaluations < instructions.size()) {
                 // Continue executing by increasing limit
                 if (evaluations >= evaluationLimit) {
+                    cout << evaluations << " evaluations have been made, reaching the limit of " << evaluationLimit << "." << endl;
+                    cout << "Increasing the limit of how many evaluations can be made by 100." << endl;
                     evaluationLimit += 100;
                 }
                 executeInstruction(instructions, index, registers, true);
                 index++;
                 evaluations++;
             }
-        }
-        // Continue executing
-        else if (cmd.compare("c") == 0) {
-            // Continue executing for 100 instructions
-            evaluationLimit += 100;
         }
         // Print
         else if (cmd.compare("p") == 0) {
@@ -282,8 +281,8 @@ int main(int argc, char** args) {
         }
         // Quit
         else if(cmd.compare("q") == 0) {
+            cout << "Quitting..." << endl;
             break;
         }
-
     }
 }
