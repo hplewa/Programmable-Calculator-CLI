@@ -12,3 +12,7 @@ x = x - y.
 y = y * z.
 z = z / w.
 w = w ** x.
+w ? go 1.
+x ? go 4.
+y ? go 7.
+z ? go 14.

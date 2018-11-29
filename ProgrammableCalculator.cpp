@@ -129,7 +129,8 @@ void executeInstruction(vector<string>, int, double*);
 void executeType4(vector<string> instructions, int index, double* registers) {
     string instruction = instructions[index];
     int id1 = instruction[0] - 'w';
-    int lineNumber = stoi(instruction.substr(8));
+    // Offset index by 1
+    int lineNumber = stoi(instruction.substr(7)) - 1;
     // If value of register left of ? is not 0, execute the line provided right of go
     if (registers[id1] != 0) {
         executeInstruction(instructions, lineNumber, registers);
@@ -231,10 +232,10 @@ int main(int argc, char** args) {
                 evaluations++;
             }
         }
-        // Print
+        // Print instructions and registers
         else if (cmd.compare("p") == 0) {
-            // Print instructions
             printInstructions(instructions);
+            printRegisters(registers);
         }
         // Help
         else if (cmd.compare("h") == 0) {
