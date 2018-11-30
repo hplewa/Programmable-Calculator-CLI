@@ -123,22 +123,23 @@ void executeType3(vector<string> instructions, int index, double* registers) {
     registers[id1] = constant;
 }
 
-void executeInstruction(vector<string>, int, double*);
+//void executeInstruction(vector<string>, int, double*);
 
 // 4. id ? go int.
-void executeType4(vector<string> instructions, int index, double* registers) {
+void executeType4(vector<string> instructions, int& index, double* registers) {
     string instruction = instructions[index];
     int id1 = instruction[0] - 'w';
     // Offset index by 1
-    int lineNumber = stoi(instruction.substr(7)) - 1;
+    int lineNumber = stoi(instruction.substr(7)) - 2;
     // If value of register left of ? is not 0, execute the line provided right of go
     if (registers[id1] != 0) {
-        executeInstruction(instructions, lineNumber, registers);
+        index = lineNumber;
+        // executeInstruction(instructions, lineNumber, registers);
     }
 }
 
 // Execute the instruction in instructions at the index, on the registers
-void executeInstruction(vector<string> instructions, int index, double* registers) {
+void executeInstruction(vector<string> instructions, int& index, double* registers) {
     if (index >= instructions.size()) {
         cout << "Index: " << index << " exceeds the number of instructions: " << instructions.size() << endl;
         return;
@@ -165,6 +166,7 @@ void executeInstruction(vector<string> instructions, int index, double* register
     else{
         executeType1(instructions, index, registers);
     }
+    index++;
 }
 
 int main(int argc, char** args) {
@@ -192,7 +194,7 @@ int main(int argc, char** args) {
             instructions = readInstructions(cmd);
         }
         else {
-            cout << "Please enter: i file_name : to initialize instructions." << endl;
+            cout << "Please enter: i file_name : to read in instructions." << endl;
         }
     }
 
@@ -200,19 +202,18 @@ int main(int argc, char** args) {
     int index = 0;
     int evaluationLimit = 100;
     int evaluations = 0;
-    while (index < instructions.size()) {
+    while (1) {
         getline(cin, cmd);
         // Debug
         if (cmd.compare("d") == 0) {
             // Get index
             if (index < instructions.size()) {
+                cout << "Instruction to be executed: " << index + 1 << ". " << instructions[index] << endl;
                 cout << "Registers before: ";
                 printRegisters(registers);
                 executeInstruction(instructions, index, registers);
                 cout << "Registers after: ";
                 printRegisters(registers);
-                index++;
-                cout << "Index of next instruction to be executed: " << index + 1 << endl;
             }
             else {
                 cout << "Index: " << index << " doesn't have an instruction." << endl;
@@ -220,22 +221,31 @@ int main(int argc, char** args) {
         }
         // Run
         else if (cmd.compare("r") == 0) {
-            while (evaluations < instructions.size()) {
-                // Continue executing by increasing limit
-                if (evaluations >= evaluationLimit) {
-                    cout << evaluations << " evaluations have been made, reaching the limit of " << evaluationLimit << "." << endl;
-                    cout << "Increasing the limit of how many evaluations can be made by 100." << endl;
-                    evaluationLimit += 100;
+            while (evaluations < evaluationLimit) {
+                if (index < instructions.size()) {
+                    executeInstruction(instructions, index, registers);
+                    evaluations++;
                 }
-                executeInstruction(instructions, index, registers);
-                index++;
-                evaluations++;
             }
+            cout << evaluations << " evaluations have been made, reaching the limit of " << evaluationLimit << "." << endl;
+            cout << "Press c to increase the evaluation limit by 100." << endl;
         }
         // Print instructions and registers
         else if (cmd.compare("p") == 0) {
             printInstructions(instructions);
             printRegisters(registers);
+            cout << "Evaluations: " << evaluations << endl;
+            if (index < instructions.size()) {
+                cout << "Instruction to be executed: " << index + 1 << ". " << instructions[index] << endl;
+            }
+            else {
+                cout << "Current index: " << index + 1 << "does not have an associated instruction." << endl;
+            }
+        }
+        // Continue executing by increasing limit        
+        else if (cmd.compare("c") == 0) {
+            cout << "Increasing the limit of how many evaluations can be made by 100." << endl;
+            evaluationLimit += 100;
         }
         // Help
         else if (cmd.compare("h") == 0) {
